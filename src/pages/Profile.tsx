@@ -15,6 +15,7 @@ export default function Profile() {
   const [profile, setProfile] = useState<any>(null);
   const [showEducation, setShowEducation] = useState(false);
   const [showTestimonials, setShowTestimonials] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   useEffect(() => {
     if (!user) return;
