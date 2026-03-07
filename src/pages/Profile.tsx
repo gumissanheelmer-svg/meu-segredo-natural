@@ -1,26 +1,47 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { useProfile, useOnboardingComplete, useDailyProgress } from '@/hooks/useLocalStorage';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { testimonials, motivationalQuotes } from '@/data/testimonials';
-import { User, Calendar, Target, Activity, Edit2, RefreshCw, BookOpen, Heart, MessageCircle, Quote, ChevronRight } from 'lucide-react';
+import { User, Calendar, Target, Activity, Edit2, RefreshCw, BookOpen, Heart, MessageCircle, Quote, ChevronRight, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 export default function Profile() {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [profile, setProfile] = useProfile();
   const [, setOnboardingComplete] = useOnboardingComplete();
   const [progress, setProgress] = useDailyProgress();
   const [showEducation, setShowEducation] = useState(false);
   const [showTestimonials, setShowTestimonials] = useState(false);
+  const [dbProfile, setDbProfile] = useState<any>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from('profiles').select('*').eq('id', user.id).single()
+      .then(({ data }) => { if (data) setDbProfile(data); });
+  }, [user]);
+
+  const displayProfile = dbProfile || profile;
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/auth');
+    toast.success('Até breve! 💕');
+  };
 
   const handleReset = () => {
     if (confirm('Tens a certeza que queres recomeçar? Todos os dados serão apagados.')) {
       setProfile(null);
       setOnboardingComplete(false);
       setProgress({});
+      if (user) {
+        supabase.from('profiles').update({ onboarding_complete: false }).eq('id', user.id);
+      }
       navigate('/');
       toast.success('Programa reiniciado');
     }
@@ -38,7 +59,8 @@ export default function Profile() {
     ativa: 'Activa',
   };
 
-  const startDate = profile?.startDate ? new Date(profile.startDate) : null;
+  const p = displayProfile;
+  const startDate = p?.startDate ? new Date(p.startDate) : p?.start_date ? new Date(p.start_date) : null;
 
   const educationContent = [
     {
@@ -169,12 +191,13 @@ export default function Profile() {
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-gold flex items-center justify-center mx-auto mb-4 shadow-warm">
             <User className="h-10 w-10 text-primary-foreground" />
           </div>
-          <h1 className="font-display text-2xl font-bold text-foreground">
-            {profile?.name || 'O Teu Perfil'}
+           <h1 className="font-display text-2xl font-bold text-foreground">
+            {displayProfile?.name || 'O Teu Perfil'}
           </h1>
           <p className="text-muted-foreground">
-            {profile?.age} anos
+            {displayProfile?.age} anos
           </p>
+          <p className="text-xs text-muted-foreground mt-1">{user?.email}</p>
         </div>
 
         {/* Profile Info */}
@@ -187,19 +210,19 @@ export default function Profile() {
           <div className="space-y-3">
             <div className="flex items-center justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Altura</span>
-              <span className="font-medium text-foreground">{profile?.height} cm</span>
+              <span className="font-medium text-foreground">{displayProfile?.height} cm</span>
             </div>
             <div className="flex items-center justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Peso inicial</span>
-              <span className="font-medium text-foreground">{profile?.weight} kg</span>
+              <span className="font-medium text-foreground">{displayProfile?.weight} kg</span>
             </div>
             <div className="flex items-center justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Cintura inicial</span>
-              <span className="font-medium text-foreground">{profile?.waist} cm</span>
+              <span className="font-medium text-foreground">{displayProfile?.waist} cm</span>
             </div>
             <div className="flex items-center justify-between py-2">
               <span className="text-muted-foreground">Quadril inicial</span>
-              <span className="font-medium text-foreground">{profile?.hip} cm</span>
+              <span className="font-medium text-foreground">{displayProfile?.hip} cm</span>
             </div>
           </div>
         </div>
@@ -210,14 +233,15 @@ export default function Profile() {
             <Target className="h-5 w-5 text-primary mb-2" />
             <p className="text-sm text-muted-foreground">Objectivo</p>
             <p className="font-semibold text-foreground text-sm">
-              {profile?.goal && goalLabels[profile.goal]}
+              {(displayProfile?.goal) && goalLabels[displayProfile.goal as keyof typeof goalLabels]}
             </p>
           </div>
           <div className="bg-card rounded-2xl p-4 shadow-card border border-border">
             <Activity className="h-5 w-5 text-sage-dark mb-2" />
             <p className="text-sm text-muted-foreground">Nível</p>
             <p className="font-semibold text-foreground text-sm">
-              {profile?.activityLevel && activityLabels[profile.activityLevel]}
+              {(displayProfile?.activityLevel || displayProfile?.activity_level) && 
+                activityLabels[(displayProfile.activityLevel || displayProfile.activity_level) as keyof typeof activityLabels]}
             </p>
           </div>
         </div>
@@ -276,7 +300,16 @@ export default function Profile() {
           </button>
         </div>
 
-        {/* Reset Button */}
+        {/* Logout Button */}
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Sair da Conta
+        </Button>
+
         <Button
           variant="outline"
           className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"

@@ -14,7 +14,99 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      daily_progress: {
+        Row: {
+          created_at: string
+          date: string
+          exercise_completed: boolean
+          hip: number | null
+          id: string
+          recipe_completed: boolean
+          sugar_avoided: boolean
+          updated_at: string
+          user_id: string
+          waist: number | null
+          water_completed: boolean
+          weight: number | null
+        }
+        Insert: {
+          created_at?: string
+          date?: string
+          exercise_completed?: boolean
+          hip?: number | null
+          id?: string
+          recipe_completed?: boolean
+          sugar_avoided?: boolean
+          updated_at?: string
+          user_id: string
+          waist?: number | null
+          water_completed?: boolean
+          weight?: number | null
+        }
+        Update: {
+          created_at?: string
+          date?: string
+          exercise_completed?: boolean
+          hip?: number | null
+          id?: string
+          recipe_completed?: boolean
+          sugar_avoided?: boolean
+          updated_at?: string
+          user_id?: string
+          waist?: number | null
+          water_completed?: boolean
+          weight?: number | null
+        }
+        Relationships: []
+      }
+      profiles: {
+        Row: {
+          activity_level: string | null
+          age: number | null
+          created_at: string
+          goal: string | null
+          height: number | null
+          hip: number | null
+          id: string
+          name: string | null
+          onboarding_complete: boolean
+          start_date: string | null
+          updated_at: string
+          waist: number | null
+          weight: number | null
+        }
+        Insert: {
+          activity_level?: string | null
+          age?: number | null
+          created_at?: string
+          goal?: string | null
+          height?: number | null
+          hip?: number | null
+          id: string
+          name?: string | null
+          onboarding_complete?: boolean
+          start_date?: string | null
+          updated_at?: string
+          waist?: number | null
+          weight?: number | null
+        }
+        Update: {
+          activity_level?: string | null
+          age?: number | null
+          created_at?: string
+          goal?: string | null
+          height?: number | null
+          hip?: number | null
+          id?: string
+          name?: string | null
+          onboarding_complete?: boolean
+          start_date?: string | null
+          updated_at?: string
+          waist?: number | null
+          weight?: number | null
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
