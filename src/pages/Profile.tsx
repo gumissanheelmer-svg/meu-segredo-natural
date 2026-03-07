@@ -233,14 +233,15 @@ export default function Profile() {
             <Target className="h-5 w-5 text-primary mb-2" />
             <p className="text-sm text-muted-foreground">Objectivo</p>
             <p className="font-semibold text-foreground text-sm">
-              {profile?.goal && goalLabels[profile.goal]}
+              {(displayProfile?.goal) && goalLabels[displayProfile.goal as keyof typeof goalLabels]}
             </p>
           </div>
           <div className="bg-card rounded-2xl p-4 shadow-card border border-border">
             <Activity className="h-5 w-5 text-sage-dark mb-2" />
             <p className="text-sm text-muted-foreground">Nível</p>
             <p className="font-semibold text-foreground text-sm">
-              {profile?.activityLevel && activityLabels[profile.activityLevel]}
+              {(displayProfile?.activityLevel || displayProfile?.activity_level) && 
+                activityLabels[(displayProfile.activityLevel || displayProfile.activity_level) as keyof typeof activityLabels]}
             </p>
           </div>
         </div>
