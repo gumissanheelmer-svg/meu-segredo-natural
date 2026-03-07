@@ -154,8 +154,14 @@ export default function Profile() {
 
         {/* Profile Info */}
         <div className="bg-card rounded-2xl p-5 shadow-card border border-border">
-          <h2 className="font-display font-semibold text-foreground mb-4 flex items-center gap-2">
-            <User className="h-4 w-4 text-primary" /> Informações Pessoais
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display font-semibold text-foreground flex items-center gap-2">
+              <User className="h-4 w-4 text-primary" /> Informações Pessoais
+            </h2>
+            <button onClick={() => setShowEdit(true)} className="flex items-center gap-1 text-primary text-sm font-medium hover:underline">
+              <Pencil className="h-3.5 w-3.5" /> Editar
+            </button>
+          </div>
           </h2>
           <div className="space-y-3">
             <div className="flex items-center justify-between py-2 border-b border-border">
