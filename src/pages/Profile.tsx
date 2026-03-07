@@ -12,17 +12,36 @@ import { toast } from 'sonner';
 
 export default function Profile() {
   const navigate = useNavigate();
+  const { user, signOut } = useAuth();
   const [profile, setProfile] = useProfile();
   const [, setOnboardingComplete] = useOnboardingComplete();
   const [progress, setProgress] = useDailyProgress();
   const [showEducation, setShowEducation] = useState(false);
   const [showTestimonials, setShowTestimonials] = useState(false);
+  const [dbProfile, setDbProfile] = useState<any>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from('profiles').select('*').eq('id', user.id).single()
+      .then(({ data }) => { if (data) setDbProfile(data); });
+  }, [user]);
+
+  const displayProfile = dbProfile || profile;
+
+  const handleLogout = async () => {
+    await signOut();
+    navigate('/auth');
+    toast.success('Até breve! 💕');
+  };
 
   const handleReset = () => {
     if (confirm('Tens a certeza que queres recomeçar? Todos os dados serão apagados.')) {
       setProfile(null);
       setOnboardingComplete(false);
       setProgress({});
+      if (user) {
+        supabase.from('profiles').update({ onboarding_complete: false }).eq('id', user.id);
+      }
       navigate('/');
       toast.success('Programa reiniciado');
     }
