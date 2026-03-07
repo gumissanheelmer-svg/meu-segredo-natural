@@ -210,19 +210,19 @@ export default function Profile() {
           <div className="space-y-3">
             <div className="flex items-center justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Altura</span>
-              <span className="font-medium text-foreground">{profile?.height} cm</span>
+              <span className="font-medium text-foreground">{displayProfile?.height} cm</span>
             </div>
             <div className="flex items-center justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Peso inicial</span>
-              <span className="font-medium text-foreground">{profile?.weight} kg</span>
+              <span className="font-medium text-foreground">{displayProfile?.weight} kg</span>
             </div>
             <div className="flex items-center justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Cintura inicial</span>
-              <span className="font-medium text-foreground">{profile?.waist} cm</span>
+              <span className="font-medium text-foreground">{displayProfile?.waist} cm</span>
             </div>
             <div className="flex items-center justify-between py-2">
               <span className="text-muted-foreground">Quadril inicial</span>
-              <span className="font-medium text-foreground">{profile?.hip} cm</span>
+              <span className="font-medium text-foreground">{displayProfile?.hip} cm</span>
             </div>
           </div>
         </div>
