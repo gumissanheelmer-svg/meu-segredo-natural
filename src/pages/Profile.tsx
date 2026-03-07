@@ -5,7 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { testimonials } from '@/data/testimonials';
-import { User, Calendar, Target, Activity, RefreshCw, BookOpen, Heart, Quote, ChevronRight, LogOut } from 'lucide-react';
+import { EditProfile } from '@/components/EditProfile';
+import { User, Calendar, Target, Activity, RefreshCw, BookOpen, Heart, Quote, ChevronRight, LogOut, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Profile() {
