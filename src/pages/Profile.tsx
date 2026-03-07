@@ -300,7 +300,16 @@ export default function Profile() {
           </button>
         </div>
 
-        {/* Reset Button */}
+        {/* Logout Button */}
+        <Button
+          variant="outline"
+          className="w-full"
+          onClick={handleLogout}
+        >
+          <LogOut className="h-4 w-4 mr-2" />
+          Sair da Conta
+        </Button>
+
         <Button
           variant="outline"
           className="w-full text-destructive border-destructive/30 hover:bg-destructive/10"
