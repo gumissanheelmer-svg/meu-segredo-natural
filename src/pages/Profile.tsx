@@ -162,7 +162,6 @@ export default function Profile() {
               <Pencil className="h-3.5 w-3.5" /> Editar
             </button>
           </div>
-          </h2>
           <div className="space-y-3">
             <div className="flex items-center justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Altura</span>
