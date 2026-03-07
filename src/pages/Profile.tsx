@@ -66,6 +66,19 @@ export default function Profile() {
     { title: 'Descanso e Recuperação', content: 'O teu corpo precisa de tempo para se recuperar. Dorme bem, evita stress excessivo e ouve o teu corpo. O descanso é parte essencial do processo.', icon: '😴' },
   ];
 
+  if (showEdit) {
+    return (
+      <Layout>
+        <EditProfile
+          profile={profile}
+          userId={user!.id}
+          onBack={() => setShowEdit(false)}
+          onSaved={(updated) => { setProfile(updated); setShowEdit(false); }}
+        />
+      </Layout>
+    );
+  }
+
   if (showTestimonials) {
     return (
       <Layout>
