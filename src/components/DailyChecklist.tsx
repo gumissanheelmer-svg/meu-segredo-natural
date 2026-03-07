@@ -69,7 +69,7 @@ export function DailyChecklist() {
 
     await supabase
       .from('daily_progress')
-      .upsert(upsertData, { onConflict: 'user_id,date' });
+      .upsert(upsertData as any);
 
     const allCompleted = checkItems.every(ci => newChecks[ci.id]);
     if (allCompleted) {
