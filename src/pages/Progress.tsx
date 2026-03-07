@@ -65,8 +65,7 @@ export default function Progress() {
     }
 
     const { error } = await supabase.from('daily_progress').upsert(
-      { user_id: user.id, date: today, ...updateData },
-      { onConflict: 'user_id,date' }
+      { user_id: user.id, date: today, ...updateData } as any
     );
 
     if (error) {
