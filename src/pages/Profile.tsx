@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { useProfile, useOnboardingComplete, useDailyProgress } from '@/hooks/useLocalStorage';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { testimonials, motivationalQuotes } from '@/data/testimonials';
-import { User, Calendar, Target, Activity, Edit2, RefreshCw, BookOpen, Heart, MessageCircle, Quote, ChevronRight } from 'lucide-react';
+import { User, Calendar, Target, Activity, Edit2, RefreshCw, BookOpen, Heart, MessageCircle, Quote, ChevronRight, LogOut } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
