@@ -190,12 +190,13 @@ export default function Profile() {
           <div className="w-20 h-20 rounded-full bg-gradient-to-br from-primary to-gold flex items-center justify-center mx-auto mb-4 shadow-warm">
             <User className="h-10 w-10 text-primary-foreground" />
           </div>
-          <h1 className="font-display text-2xl font-bold text-foreground">
-            {profile?.name || 'O Teu Perfil'}
+           <h1 className="font-display text-2xl font-bold text-foreground">
+            {displayProfile?.name || 'O Teu Perfil'}
           </h1>
           <p className="text-muted-foreground">
-            {profile?.age} anos
+            {displayProfile?.age} anos
           </p>
+          <p className="text-xs text-muted-foreground mt-1">{user?.email}</p>
         </div>
 
         {/* Profile Info */}
