@@ -5,7 +5,8 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { testimonials } from '@/data/testimonials';
-import { User, Calendar, Target, Activity, RefreshCw, BookOpen, Heart, Quote, ChevronRight, LogOut } from 'lucide-react';
+import { EditProfile } from '@/components/EditProfile';
+import { User, Calendar, Target, Activity, RefreshCw, BookOpen, Heart, Quote, ChevronRight, LogOut, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function Profile() {
@@ -14,6 +15,7 @@ export default function Profile() {
   const [profile, setProfile] = useState<any>(null);
   const [showEducation, setShowEducation] = useState(false);
   const [showTestimonials, setShowTestimonials] = useState(false);
+  const [showEdit, setShowEdit] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -63,6 +65,19 @@ export default function Profile() {
     { title: 'Hidratação é Fundamental', content: 'Bebe pelo menos 8 copos de água por dia. A água ajuda a eliminar toxinas, melhora a pele e potencia os efeitos das receitas e exercícios.', icon: '💧' },
     { title: 'Descanso e Recuperação', content: 'O teu corpo precisa de tempo para se recuperar. Dorme bem, evita stress excessivo e ouve o teu corpo. O descanso é parte essencial do processo.', icon: '😴' },
   ];
+
+  if (showEdit) {
+    return (
+      <Layout>
+        <EditProfile
+          profile={profile}
+          userId={user!.id}
+          onBack={() => setShowEdit(false)}
+          onSaved={(updated) => { setProfile(updated); setShowEdit(false); }}
+        />
+      </Layout>
+    );
+  }
 
   if (showTestimonials) {
     return (
@@ -139,9 +154,14 @@ export default function Profile() {
 
         {/* Profile Info */}
         <div className="bg-card rounded-2xl p-5 shadow-card border border-border">
-          <h2 className="font-display font-semibold text-foreground mb-4 flex items-center gap-2">
-            <User className="h-4 w-4 text-primary" /> Informações Pessoais
-          </h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="font-display font-semibold text-foreground flex items-center gap-2">
+              <User className="h-4 w-4 text-primary" /> Informações Pessoais
+            </h2>
+            <button onClick={() => setShowEdit(true)} className="flex items-center gap-1 text-primary text-sm font-medium hover:underline">
+              <Pencil className="h-3.5 w-3.5" /> Editar
+            </button>
+          </div>
           <div className="space-y-3">
             <div className="flex items-center justify-between py-2 border-b border-border">
               <span className="text-muted-foreground">Altura</span>
