@@ -59,7 +59,8 @@ export default function Profile() {
     ativa: 'Activa',
   };
 
-  const startDate = profile?.startDate ? new Date(profile.startDate) : null;
+  const p = displayProfile;
+  const startDate = p?.startDate ? new Date(p.startDate) : p?.start_date ? new Date(p.start_date) : null;
 
   const educationContent = [
     {
