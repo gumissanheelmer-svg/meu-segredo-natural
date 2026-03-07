@@ -1,25 +1,17 @@
 
 
-# Plano: Corrigir Manifesto PWA para PWABuilder
+# Plano: Corrigir Tipos dos Ícones no Manifesto PWA
 
 ## Problema
-O `vite-plugin-pwa` está a gerar o manifesto mas remove campos como `id` e `screenshots` porque não os suporta nativamente. O PWABuilder precisa desses campos para validar a PWA.
+O PWABuilder diz "Fix the icon types in your web manifest." — isto acontece porque os ficheiros `icon-192.png` e `icon-512.png` foram gerados como SVG (conteúdo SVG) mas guardados com extensão `.png`. O PWABuilder valida o conteúdo real do ficheiro e detecta que não são PNGs verdadeiros.
 
 ## Solução
-Criar um ficheiro `public/manifest.webmanifest` estático com todos os campos necessários, e configurar o `vite-plugin-pwa` para não gerar o seu próprio manifesto (`manifest: false`). Adicionar manualmente o `<link rel="manifest">` no `index.html`.
+Regenerar os ícones como ficheiros PNG reais (não SVGs renomeados). Vou criar ícones PNG válidos usando canvas/data URI encoding para garantir que o conteúdo binário é PNG genuíno.
 
 ## Ficheiros a Alterar
-
-### 1. `public/manifest.webmanifest` (criar)
-- Manifesto completo com `id`, `screenshots`, `icons`, `display`, etc.
-
-### 2. `vite.config.ts`
-- Remover a secção `manifest` do plugin e definir `manifest: false`
-- Manter o workbox e service worker
-
-### 3. `index.html`
-- Adicionar `<link rel="manifest" href="/manifest.webmanifest">`
+- `public/icon-192.png` — substituir por PNG real
+- `public/icon-512.png` — substituir por PNG real
 
 ## Resultado
-O PWABuilder conseguirá ler o manifesto completo com todos os campos obrigatórios.
+Os ícones serão PNGs válidos, o PWABuilder deixará de reportar o erro de tipos.
 
