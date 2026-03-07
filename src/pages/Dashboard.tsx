@@ -2,17 +2,19 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Layout } from '@/components/Layout';
 import { DailyChecklist } from '@/components/DailyChecklist';
-import { useProfile, useDailyProgress } from '@/hooks/useLocalStorage';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { motivationalQuotes, testimonials } from '@/data/testimonials';
 import { recipes } from '@/data/recipes';
-import { exercises, weeklyPlan } from '@/data/exercises';
+import { weeklyPlan } from '@/data/exercises';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, Flame, Calendar, Star, Quote } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 export default function Dashboard() {
-  const [profile] = useProfile();
-  const [progress] = useDailyProgress();
+  const { user } = useAuth();
+  const [profile, setProfile] = useState<any>(null);
+  const [streak, setStreak] = useState(0);
   const [quote, setQuote] = useState('');
   const [testimonial, setTestimonial] = useState(testimonials[0]);
 
@@ -21,38 +23,45 @@ export default function Dashboard() {
   const dayOfWeek = dayNames[today.getDay()];
   const todayPlan = weeklyPlan.find(p => p.day === dayOfWeek);
 
-  // Calculate streak
-  const calculateStreak = () => {
-    let streak = 0;
-    const dates = Object.keys(progress).sort().reverse();
-    
-    for (const date of dates) {
-      const dayProgress = progress[date];
-      if (dayProgress?.checks) {
-        const allCompleted = ['recipe', 'exercise', 'water', 'sugar'].every(
-          key => dayProgress.checks[key]
-        );
-        if (allCompleted) {
-          streak++;
-        } else {
-          break;
-        }
-      } else {
-        break;
-      }
-    }
-    return streak;
-  };
-
   useEffect(() => {
     setQuote(motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)]);
     setTestimonial(testimonials[Math.floor(Math.random() * testimonials.length)]);
   }, []);
 
-  const streak = calculateStreak();
+  useEffect(() => {
+    if (!user) return;
+
+    // Load profile
+    supabase.from('profiles').select('*').eq('id', user.id).maybeSingle()
+      .then(({ data }) => { if (data) setProfile(data); });
+
+    // Calculate streak from DB
+    supabase.from('daily_progress')
+      .select('date, recipe_completed, exercise_completed, water_completed, sugar_avoided')
+      .eq('user_id', user.id)
+      .order('date', { ascending: false })
+      .limit(60)
+      .then(({ data }) => {
+        if (!data) return;
+        let s = 0;
+        // Check consecutive days ending today or yesterday
+        const todayStr = new Date().toISOString().split('T')[0];
+        const sorted = data.sort((a, b) => b.date.localeCompare(a.date));
+        
+        for (const row of sorted) {
+          const allDone = row.recipe_completed && row.exercise_completed && row.water_completed && row.sugar_avoided;
+          if (allDone) {
+            s++;
+          } else {
+            break;
+          }
+        }
+        setStreak(s);
+      });
+  }, [user]);
+
   const firstName = profile?.name?.split(' ')[0] || 'Amiga';
 
-  // Get recommended content based on goal
   const getRecommendedRecipe = () => {
     if (profile?.goal === 'cintura') return recipes.find(r => r.category === 'cintura');
     if (profile?.goal === 'bumbum') return recipes.find(r => r.category === 'bumbum');
@@ -79,7 +88,6 @@ export default function Dashboard() {
             </p>
           </div>
 
-          {/* Streak badge */}
           {streak > 0 && (
             <div className="absolute top-4 right-4 flex items-center gap-1.5 bg-primary-foreground/20 backdrop-blur-sm px-3 py-1.5 rounded-full">
               <Flame className="h-4 w-4 text-gold-light" />

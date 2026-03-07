@@ -1,51 +1,77 @@
 import { useState, useEffect } from 'react';
 import { Check, Droplets, Utensils, Dumbbell, CakeSlice, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useDailyProgress } from '@/hooks/useLocalStorage';
+import { useAuth } from '@/contexts/AuthContext';
+import { supabase } from '@/integrations/supabase/client';
 import { motivationalQuotes } from '@/data/testimonials';
 import { toast } from 'sonner';
 
 interface CheckItem {
   id: string;
+  dbColumn: 'recipe_completed' | 'exercise_completed' | 'water_completed' | 'sugar_avoided';
   label: string;
   icon: React.ElementType;
   color: string;
 }
 
 const checkItems: CheckItem[] = [
-  { id: 'recipe', label: 'Bebeu receita do dia', icon: Utensils, color: 'bg-terracotta-light text-primary' },
-  { id: 'exercise', label: 'Fez exercício', icon: Dumbbell, color: 'bg-gold-light text-accent-foreground' },
-  { id: 'water', label: 'Bebeu água suficiente', icon: Droplets, color: 'bg-sage text-sage-dark' },
-  { id: 'sugar', label: 'Evitou açúcar', icon: CakeSlice, color: 'bg-secondary text-secondary-foreground' },
+  { id: 'recipe', dbColumn: 'recipe_completed', label: 'Bebeu receita do dia', icon: Utensils, color: 'bg-terracotta-light text-primary' },
+  { id: 'exercise', dbColumn: 'exercise_completed', label: 'Fez exercício', icon: Dumbbell, color: 'bg-gold-light text-accent-foreground' },
+  { id: 'water', dbColumn: 'water_completed', label: 'Bebeu água suficiente', icon: Droplets, color: 'bg-sage text-sage-dark' },
+  { id: 'sugar', dbColumn: 'sugar_avoided', label: 'Evitou açúcar', icon: CakeSlice, color: 'bg-secondary text-secondary-foreground' },
 ];
 
 export function DailyChecklist() {
+  const { user } = useAuth();
   const today = new Date().toISOString().split('T')[0];
-  const [progress, setProgress] = useDailyProgress();
   const [todayChecks, setTodayChecks] = useState<Record<string, boolean>>({});
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (progress[today]) {
-      setTodayChecks(progress[today].checks || {});
-    }
-  }, [progress, today]);
+    if (!user) return;
+    supabase
+      .from('daily_progress')
+      .select('recipe_completed, exercise_completed, water_completed, sugar_avoided')
+      .eq('user_id', user.id)
+      .eq('date', today)
+      .maybeSingle()
+      .then(({ data }) => {
+        if (data) {
+          setTodayChecks({
+            recipe: data.recipe_completed,
+            exercise: data.exercise_completed,
+            water: data.water_completed,
+            sugar: data.sugar_avoided,
+          });
+        }
+        setLoading(false);
+      });
+  }, [user, today]);
 
-  const toggleCheck = (id: string) => {
-    const newChecks = { ...todayChecks, [id]: !todayChecks[id] };
+  const toggleCheck = async (item: CheckItem) => {
+    if (!user) return;
+    const newValue = !todayChecks[item.id];
+    const newChecks = { ...todayChecks, [item.id]: newValue };
     setTodayChecks(newChecks);
-    
-    const newProgress = {
-      ...progress,
-      [today]: {
-        ...progress[today],
-        checks: newChecks,
-        date: today,
-      },
-    };
-    setProgress(newProgress);
 
-    // Check if all items are completed
-    const allCompleted = checkItems.every(item => newChecks[item.id]);
+    const upsertData: Record<string, any> = {
+      user_id: user.id,
+      date: today,
+      [item.dbColumn]: newValue,
+    };
+
+    // Include all current values so we don't reset other columns
+    checkItems.forEach(ci => {
+      if (ci.id !== item.id) {
+        upsertData[ci.dbColumn] = newChecks[ci.id] || false;
+      }
+    });
+
+    await supabase
+      .from('daily_progress')
+      .upsert(upsertData as any);
+
+    const allCompleted = checkItems.every(ci => newChecks[ci.id]);
     if (allCompleted) {
       const randomQuote = motivationalQuotes[Math.floor(Math.random() * motivationalQuotes.length)];
       toast.success('Parabéns! Completaste o dia!', {
@@ -70,7 +96,6 @@ export function DailyChecklist() {
         </span>
       </div>
 
-      {/* Progress bar */}
       <div className="h-2 bg-muted rounded-full mb-5 overflow-hidden">
         <div
           className="h-full bg-gradient-to-r from-primary to-gold rounded-full transition-all duration-500"
@@ -84,7 +109,8 @@ export function DailyChecklist() {
           return (
             <button
               key={item.id}
-              onClick={() => toggleCheck(item.id)}
+              onClick={() => toggleCheck(item)}
+              disabled={loading}
               className={cn(
                 'w-full flex items-center gap-3 p-3 rounded-xl transition-all duration-300',
                 isChecked
