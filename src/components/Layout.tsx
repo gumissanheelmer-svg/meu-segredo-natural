@@ -1,8 +1,9 @@
 import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Home, Utensils, Dumbbell, TrendingUp, User, Sparkles } from 'lucide-react';
+import { Home, Utensils, Dumbbell, TrendingUp, User } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { InstallBanner } from '@/components/InstallBanner';
+import logo from '@/assets/logo.png';
 
 interface LayoutProps {
   children: ReactNode;
