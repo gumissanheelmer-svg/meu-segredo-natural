@@ -45,9 +45,13 @@ export default defineConfig(({ mode }) => ({
         short_name: "Segredo Natural",
         description: "Programa de 21 dias para saúde e emagrecimento",
         start_url: "/",
+        scope: "/",
         display: "standalone",
+        orientation: "portrait",
+        lang: "pt",
         background_color: "#ffffff",
-        theme_color: "#4CAF50",
+        theme_color: "#c86a3a",
+        categories: ["health", "fitness", "lifestyle"],
         icons: [
           {
             src: "/icon-192.png",
