@@ -41,8 +41,8 @@ export default defineConfig(({ mode }) => ({
       },
       manifest: {
         id: "/",
-        name: "Segredo Natural",
-        short_name: "Segredo Natural",
+        name: "Glow Up Natural",
+        short_name: "Glow Up",
         description: "Programa de 21 dias para saúde e emagrecimento",
         start_url: "/",
         scope: "/",
