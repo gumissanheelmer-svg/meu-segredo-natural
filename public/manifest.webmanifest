@@ -1,12 +1,14 @@
 {
+  "id": "/",
   "name": "Segredo Natural",
   "short_name": "Segredo Natural",
-  "id": "/",
+  "description": "Programa de 21 dias para uma vida mais saudável e natural",
   "start_url": "/",
+  "scope": "/",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#ffffff",
   "theme_color": "#4CAF50",
-  "description": "O teu programa de 21 dias para uma vida mais saudável e natural",
   "icons": [
     {
       "src": "/icon-192.png",
@@ -20,5 +22,6 @@
       "type": "image/png",
       "purpose": "any maskable"
     }
-  ]
+  ],
+  "categories": ["health", "fitness", "lifestyle"]
 }
