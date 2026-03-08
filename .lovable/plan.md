@@ -1,24 +1,17 @@
 
 
-# Plano: Banner de Instalação do App (PWA)
+# Plano: Corrigir Tipos dos Ícones no Manifesto PWA
 
-## O que vai ser feito
-Criar um banner/notificação que aparece automaticamente nas páginas da app (dentro do Layout) a sugerir ao utilizador instalar o aplicativo no telemóvel. O banner só aparece se a app ainda não estiver instalada e pode ser fechado pelo utilizador.
+## Problema
+O PWABuilder diz "Fix the icon types in your web manifest." — isto acontece porque os ficheiros `icon-192.png` e `icon-512.png` foram gerados como SVG (conteúdo SVG) mas guardados com extensão `.png`. O PWABuilder valida o conteúdo real do ficheiro e detecta que não são PNGs verdadeiros.
 
-## Alterações
+## Solução
+Regenerar os ícones como ficheiros PNG reais (não SVGs renomeados). Vou criar ícones PNG válidos usando canvas/data URI encoding para garantir que o conteúdo binário é PNG genuíno.
 
-### 1. Criar componente `InstallBanner.tsx`
-- Banner fixo no topo (abaixo do header) com botão "Instalar App"
-- Detecta o evento `beforeinstallprompt` (Android/Chrome) para instalar diretamente
-- No iOS, mostra instruções de como adicionar ao ecrã inicial
-- Esconde-se se a app já estiver instalada (standalone mode)
-- Botão de fechar que guarda no localStorage para não voltar a aparecer
-- Design compacto e visualmente coerente com o tema da app
+## Ficheiros a Alterar
+- `public/icon-192.png` — substituir por PNG real
+- `public/icon-512.png` — substituir por PNG real
 
-### 2. Adicionar o `InstallBanner` ao `Layout.tsx`
-- Inserir o componente logo abaixo do header para ser visível em todas as páginas protegidas
-
-## Ficheiros
-- **Criar:** `src/components/InstallBanner.tsx`
-- **Editar:** `src/components/Layout.tsx` (importar e usar o banner)
+## Resultado
+Os ícones serão PNGs válidos, o PWABuilder deixará de reportar o erro de tipos.
 
