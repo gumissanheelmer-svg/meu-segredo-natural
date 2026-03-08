@@ -1,17 +1,30 @@
 
 
-# Plano: Corrigir Tipos dos Ícones no Manifesto PWA
+# Plano: PWA Completa com Ícones Múltiplos e Banner de Instalação
 
-## Problema
-O PWABuilder diz "Fix the icon types in your web manifest." — isto acontece porque os ficheiros `icon-192.png` e `icon-512.png` foram gerados como SVG (conteúdo SVG) mas guardados com extensão `.png`. O PWABuilder valida o conteúdo real do ficheiro e detecta que não são PNGs verdadeiros.
+## Situação Atual
+A app já tem `vite-plugin-pwa` configurado com manifesto válido, service worker Workbox, e ícones 192x192 e 512x512. Faltam: ícones em tamanhos intermédios (48, 72, 96, 128, 144, 152, 384) e um banner de instalação visível ao utilizador.
 
-## Solução
-Regenerar os ícones como ficheiros PNG reais (não SVGs renomeados). Vou criar ícones PNG válidos usando canvas/data URI encoding para garantir que o conteúdo binário é PNG genuíno.
+## O que será feito
 
-## Ficheiros a Alterar
-- `public/icon-192.png` — substituir por PNG real
-- `public/icon-512.png` — substituir por PNG real
+### 1. Adicionar ícones em todos os tamanhos ao manifesto
+Como só existem dois ficheiros de ícone reais (192 e 512), vamos referenciar esses dois nos tamanhos pedidos pelo PWABuilder. O ícone de 192px será usado para tamanhos ≤192 e o de 512px para tamanhos maiores. Isto é válido — o browser redimensiona automaticamente. Adicionamos todas as entradas no array `icons` do manifesto no `vite.config.ts`.
 
-## Resultado
-Os ícones serão PNGs válidos, o PWABuilder deixará de reportar o erro de tipos.
+### 2. Separar `purpose` dos ícones
+PWABuilder recomenda ícones separados para `any` e `maskable`. Vamos duplicar as entradas: uma com `purpose: "any"` e outra com `purpose: "maskable"` para os tamanhos principais (192 e 512).
+
+### 3. Criar componente `InstallBanner.tsx`
+Banner compacto e fixo (abaixo do header) que:
+- Captura `beforeinstallprompt` para instalação directa (Android/Chrome)
+- No iOS mostra instruções de "Adicionar ao Ecrã Inicial"
+- Esconde-se se a app já estiver instalada (standalone)
+- Botão de fechar com persistência em `localStorage`
+
+### 4. Adicionar `InstallBanner` ao `Layout.tsx`
+Inserir o componente entre o header e o conteúdo principal.
+
+## Ficheiros
+- **Editar:** `vite.config.ts` — expandir array de ícones, separar purpose
+- **Criar:** `src/components/InstallBanner.tsx`
+- **Editar:** `src/components/Layout.tsx` — importar e renderizar InstallBanner
 
