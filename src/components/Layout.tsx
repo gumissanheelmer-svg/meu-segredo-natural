@@ -25,9 +25,9 @@ export function Layout({ children }: LayoutProps) {
       {/* Header */}
       <header className="sticky top-0 z-50 glass-effect border-b border-border/50 px-4 py-3">
         <div className="flex items-center justify-center gap-2">
-          <Sparkles className="h-5 w-5 text-primary" />
+          <img src={logo} alt="Glow Up Natural" className="h-8 w-auto" />
           <h1 className="font-display text-lg font-semibold text-foreground">
-            Beleza Natural
+            Glow Up Natural
           </h1>
         </div>
       </header>
