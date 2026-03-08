@@ -31,6 +31,9 @@ export function Layout({ children }: LayoutProps) {
         </div>
       </header>
 
+      {/* Install Banner */}
+      <InstallBanner />
+
       {/* Main Content */}
       <main className="container max-w-lg mx-auto px-4 py-6">
         {children}
