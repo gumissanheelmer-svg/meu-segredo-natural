@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Utensils, Dumbbell, TrendingUp, User, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { InstallBanner } from '@/components/InstallBanner';
 
 interface LayoutProps {
   children: ReactNode;
@@ -29,6 +30,9 @@ export function Layout({ children }: LayoutProps) {
           </h1>
         </div>
       </header>
+
+      {/* Install Banner */}
+      <InstallBanner />
 
       {/* Main Content */}
       <main className="container max-w-lg mx-auto px-4 py-6">
