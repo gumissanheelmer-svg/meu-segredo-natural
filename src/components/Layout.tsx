@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Home, Utensils, Dumbbell, TrendingUp, User, Sparkles } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { InstallBanner } from '@/components/InstallBanner';
 
 interface LayoutProps {
   children: ReactNode;
